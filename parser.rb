@@ -105,9 +105,9 @@ class Parser
 
     if infix_parselet = @infix_parselets[token.type]
       infix_parselet.precedence(token.type)
+    else
+      0
     end
-
-    0
   end
 
   def peek 
