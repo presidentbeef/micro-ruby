@@ -38,6 +38,18 @@ class BinaryOpExpression
   end
 end
 
+Precedence = {
+  assign: 1,
+  condition: 2,
+  plus: 3,
+  minus: 3,
+  multiply: 4,
+  exponent: 5,
+  prefix: 6,
+  postfix: 7,
+  call: 8
+}.freeze
+
 class NameParselet
   def parse(parser, token)
     NameExpression.new(token.text)
@@ -50,7 +62,7 @@ end
 
 class PrefixOpParselet
   def parse(parser, token)
-    operand = parser.parse_expression(6)
+    operand = parser.parse_expression(Precedence[token.type])
     PrefixExpression.new(token.type, operand)
   end
 end
@@ -62,10 +74,7 @@ class BinaryOpParselet
   end
 
   def precedence(op)
-    case op
-    when :plus
-      3
-    end
+    Precedence[op]
   end
 end
 
