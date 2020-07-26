@@ -142,4 +142,6 @@ p.prefix(:plus)
 p.prefix(:minus)
 p.infix(:plus)
 p.register(:name, NameParselet.new)
-puts p.parse_expression.inspect
+
+require 'pp'
+pp p.parse_expression
