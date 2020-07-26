@@ -1,82 +1,6 @@
-class Token
-  attr_accessor :type
-  attr_accessor :text
-
-  def initialize(type, text)
-    self.type = type
-    self.text = text
-  end
-end
-
-class NameExpression
-  attr_reader :name
-
-  def initialize(name)
-    @name = name
-  end
-end
-
-class PrefixExpression
-  attr_reader :op
-  attr_reader :operand
-
-  def initialize(op, operand)
-    @op = op
-    @operand = operand
-  end
-end
-
-class BinaryOpExpression
-  attr_reader :left
-  attr_reader :right
-  attr_reader :op
-
-  def initialize(left, op, right)
-    @left = left
-    @op = op
-    @right = right
-  end
-end
-
-Precedence = {
-  assign: 1,
-  condition: 2,
-  plus: 3,
-  minus: 3,
-  multiply: 4,
-  exponent: 5,
-  prefix: 6,
-  postfix: 7,
-  call: 8
-}.freeze
-
-class NameParselet
-  def parse(parser, token)
-    NameExpression.new(token.text)
-  end
-
-  def precedence
-    8
-  end
-end
-
-class PrefixOpParselet
-  def parse(parser, token)
-    operand = parser.parse_expression(Precedence[token.type])
-    PrefixExpression.new(token.type, operand)
-  end
-end
-
-class BinaryOpParselet
-  def parse(parser, left, token)
-    right = parser.parse_expression(precedence(token.type))
-    BinaryOpExpression.new(left, token.type, right)
-  end
-
-  def precedence(op)
-    Precedence[op]
-  end
-end
+require_relative 'ast'
+require_relative 'parselets'
+require_relative 'lexer'
 
 class Parser
   def initialize(tokens)
@@ -104,8 +28,14 @@ class Parser
     left
   end
 
-  def next_token
-    @tokens.shift
+  def next_token(type = nil)
+    token = @tokens.shift
+
+    if type and type != token.type
+      raise "Expected `#{type}` token but got `#{token.type}`!"
+    end
+
+    token
   end
 
   def next_precedence
