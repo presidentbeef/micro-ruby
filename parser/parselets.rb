@@ -42,36 +42,28 @@ class IfCondParselet
   def parse(parser, token)
     condition = parser.parse_expression
 
-    next_token = parser.peek
+    then_branch = BlockParser.new.parse(parser, [:else, :end])
 
-    if next_token.type == :end
-      parser.next_token
-      return IfExpression.new(condition, nil, nil)
-    elsif next_token.type == :else
-      parser.next_token
+    next_token = parser.next_token
+
+    if next_token.type == :else
+      else_branch = BlockParser.new.parse(parser)
     end
 
-    then_branch = parser.parse_expression
-
-    next_token = parser.peek
-
-    if next_token.type == :end
-      parser.next_token
-      return IfExpression.new(condition, then_branch, nil)
-    elsif next_token.type == :else
-      parser.next_token
-    else
-      raise "Expected 'end' or 'else' but got #{next_token.type}"
-    end
-
-    else_branch = parser.parse_expression
-
-    next_token = parser.peek
-
-    if next_token.type != :end
-      raise "Expecting an end... but got an #{next_token.type}"
-    end
+    parser.next_token
 
     return IfExpression.new(condition, then_branch, else_branch)
+  end
+end
+
+class BlockParser
+  def parse(parser, end_tokens = [:end])
+    be = BlockExpression.new
+
+    until end_tokens.include? parser.peek.type
+      be << parser.parse_expression
+    end
+
+    be
   end
 end

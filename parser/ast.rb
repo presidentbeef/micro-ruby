@@ -37,3 +37,19 @@ class IfExpression
     @else_branch = else_branch
   end
 end
+
+class BlockExpression
+  attr_reader :exps
+
+  def initialize
+    @exps = []
+  end
+
+  def << exp
+    @exps << exp
+  end
+
+  def empty?
+    @exps.empty?
+  end
+end
