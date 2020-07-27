@@ -66,12 +66,23 @@ class Parser
   end
 end
 
-tokens = [Token.new(:minus, '-'), Token.new(:name, 'a'), Token.new(:plus, '+'), Token.new(:name, 'b')]
+tokens = [
+  Token.new(:if),
+  Token.new(:name, 'a'),
+  Token.new(:name, 'b'),
+  Token.new(:plus),
+  Token.new(:name, 'c'),
+  Token.new(:name, 'd'),
+  Token.new(:else),
+  Token.new(:name, 'e'),
+  Token.new(:end)
+]
 p = Parser.new(tokens)
 p.prefix(:plus)
 p.prefix(:minus)
 p.infix(:plus)
 p.register(:name, NameParselet.new)
+p.register(:if, IfCondParselet.new)
 
 require 'pp'
 pp p.parse_expression
