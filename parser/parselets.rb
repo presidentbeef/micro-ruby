@@ -42,15 +42,15 @@ class IfCondParselet
   def parse(parser, token)
     condition = parser.parse_expression
 
-    then_branch = BlockParser.new.parse(parser, [:else, :end])
+    then_branch = BlockParser.new.parse(parser, [:else, :elsif, :end])
 
-    next_token = parser.next_token
-
-    if next_token.type == :else
+    case parser.next_token.type
+    when :else
       else_branch = BlockParser.new.parse(parser)
+      parser.next_token(:end)
+    when :elsif
+      else_branch = IfCondParselet.new.parse(parser, nil)
     end
-
-    parser.next_token
 
     return IfExpression.new(condition, then_branch, else_branch)
   end
