@@ -27,3 +27,13 @@ class BinaryOpExpression
     @right = right
   end
 end
+
+class IfExpression
+  attr_reader :cond, :then_branch, :else_branch
+
+  def initialize(cond, then_branch, else_branch)
+    @cond = cond
+    @then_branch = then_branch
+    @else_branch = else_branch
+  end
+end
