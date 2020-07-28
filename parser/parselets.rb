@@ -56,6 +56,25 @@ class IfCondParselet
   end
 end
 
+class ClassParselet
+  attr_reader :name, :parent, :body
+
+  def parse(parser, token)
+    name = NameParselet.new.parse(parser, parser.next_token(:const))
+
+    if parser.peek.type == :less_than
+      parser.next_token
+      parent = NameParselet.new.parse(parser, parser.next_token(:const))
+    else
+      parent = nil
+    end
+
+    body = BlockParser.new.parse(parser)
+
+    ClassExpression.new(name, parent, body)
+  end
+end
+
 class BlockParser
   def parse(parser, end_tokens = [:end])
     be = BlockExpression.new

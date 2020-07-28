@@ -83,6 +83,7 @@ p.prefix(:minus)
 p.infix(:plus)
 p.register(:name, NameParselet.new)
 p.register(:if, IfCondParselet.new)
+p.register(:class, ClassParselet.new)
 
 require 'pp'
 pp p.parse_expression
