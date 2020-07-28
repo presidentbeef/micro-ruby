@@ -11,45 +11,45 @@ Precedence = {
 }.freeze
 
 class NameParselet
-  def parse(parser, token)
+  def self.parse(parser, token)
     NameExpression.new(token.text)
   end
 
-  def precedence
+  def self.precedence
     Precedence[:call]
   end
 end
 
 class PrefixOpParselet
-  def parse(parser, token)
+  def self.parse(parser, token)
     operand = parser.parse_expression(Precedence[token.type])
     PrefixExpression.new(token.type, operand)
   end
 end
 
 class BinaryOpParselet
-  def parse(parser, left, token)
+  def self.parse(parser, left, token)
     right = parser.parse_expression(precedence(token.type))
     BinaryOpExpression.new(left, token.type, right)
   end
 
-  def precedence(op)
+  def self.precedence(op)
     Precedence[op]
   end
 end
 
 class IfCondParselet
-  def parse(parser, token)
+  def self.parse(parser, token)
     condition = parser.parse_expression
 
-    then_branch = BlockParser.new.parse(parser, [:else, :elsif, :end])
+    then_branch = BlockParser.parse(parser, [:else, :elsif, :end])
 
     case parser.next_token.type
     when :else
-      else_branch = BlockParser.new.parse(parser)
+      else_branch = BlockParser.parse(parser)
       parser.next_token(:end)
     when :elsif
-      else_branch = IfCondParselet.new.parse(parser, nil)
+      else_branch = IfCondParselet.parse(parser, nil)
     end
 
     return IfExpression.new(condition, then_branch, else_branch)
@@ -59,24 +59,24 @@ end
 class ClassParselet
   attr_reader :name, :parent, :body
 
-  def parse(parser, token)
-    name = NameParselet.new.parse(parser, parser.next_token(:const))
+  def self.parse(parser, token)
+    name = NameParselet.parse(parser, parser.next_token(:const))
 
     if parser.peek.type == :less_than
       parser.next_token
-      parent = NameParselet.new.parse(parser, parser.next_token(:const))
+      parent = NameParselet.parse(parser, parser.next_token(:const))
     else
       parent = nil
     end
 
-    body = BlockParser.new.parse(parser)
+    body = BlockParser.parse(parser)
 
     ClassExpression.new(name, parent, body)
   end
 end
 
 class BlockParser
-  def parse(parser, end_tokens = [:end])
+  def self.parse(parser, end_tokens = [:end])
     be = BlockExpression.new
 
     until end_tokens.include? parser.peek.type

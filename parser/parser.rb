@@ -58,11 +58,11 @@ class Parser
   end
 
   def prefix(token_type)
-    @prefix_parselets[token_type] = PrefixOpParselet.new
+    @prefix_parselets[token_type] = PrefixOpParselet
   end
 
   def infix(token_type)
-    @infix_parselets[token_type] = BinaryOpParselet.new
+    @infix_parselets[token_type] = BinaryOpParselet
   end
 end
 
@@ -81,9 +81,9 @@ p = Parser.new(tokens)
 p.prefix(:plus)
 p.prefix(:minus)
 p.infix(:plus)
-p.register(:name, NameParselet.new)
-p.register(:if, IfCondParselet.new)
-p.register(:class, ClassParselet.new)
+p.register(:name, NameParselet)
+p.register(:if, IfCondParselet)
+p.register(:class, ClassParselet)
 
 require 'pp'
 pp p.parse_expression
