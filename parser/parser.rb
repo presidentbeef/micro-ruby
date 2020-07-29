@@ -61,9 +61,17 @@ class Parser
     @prefix_parselets[token_type] = PrefixOpParselet
   end
 
-  def infix(token_type)
+  def binary_op(token_type)
     @infix_parselets[token_type] = BinaryOpParselet
   end
+
+  def infix(token_type, parselet)
+    @infix_parselets[token_type] = parselet
+  end
+end
+
+def t(*args)
+  Token.new(*args)
 end
 
 tokens = [
@@ -78,9 +86,10 @@ tokens = [
   Token.new(:end)
 ]
 p = Parser.new(tokens)
-p.prefix(:plus)
+p.binary_op(:plus)
+p.binary_op(:gt)
 p.prefix(:minus)
-p.infix(:plus)
+p.infix(:dot, DotCallParselet)
 p.register(:name, NameParselet)
 p.register(:if, IfCondParselet)
 p.register(:class, ClassParselet)
