@@ -1,14 +1,12 @@
 Precedence = {
   assign: 1,
-  condition: 2,
-  plus: 3,
-  minus: 3,
-  multiply: 4,
-  exponent: 5,
-  prefix: 6,
-  postfix: 7,
-  call: 8,
-  dot: 8
+  and_or: 2,
+  equality: 3,
+  compare: 4,
+  term: 5,
+  product: 6,
+  unary: 7,
+  call: 8
 }.freeze
 
 class NameParselet
@@ -23,7 +21,7 @@ end
 
 class PrefixOpParselet
   def self.parse(parser, token)
-    operand = parser.parse_expression(Precedence[token.type])
+    operand = parser.parse_expression(Precedence[:unary])
     PrefixExpression.new(token.type, operand)
   end
 end
@@ -35,7 +33,18 @@ class BinaryOpParselet
   end
 
   def self.precedence(op)
-    Precedence[op]
+    case op
+    when :plus, :minus
+      Precedence[:term]
+    when :prod, :div
+      Precedence[:product]
+    when :gt, :lt
+      Precedence[:compare]
+    when :equal
+      Precedence[:equality]
+    else
+      raise "Unknown operator: #{op}"
+    end
   end
 end
 
@@ -46,7 +55,7 @@ class DotCallParselet
   end
 
   def self.precedence(_)
-    Precedence[:dot]
+    Precedence[:call]
   end
 end
 
