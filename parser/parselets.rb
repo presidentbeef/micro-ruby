@@ -7,7 +7,8 @@ Precedence = {
   exponent: 5,
   prefix: 6,
   postfix: 7,
-  call: 8
+  call: 8,
+  dot: 8
 }.freeze
 
 class NameParselet
@@ -35,6 +36,17 @@ class BinaryOpParselet
 
   def self.precedence(op)
     Precedence[op]
+  end
+end
+
+class DotCallParselet
+  def self.parse(parser, left, token)
+    right = parser.parse_expression(precedence(token))
+    CallExpression.new(left, right)
+  end
+
+  def self.precedence(_)
+    Precedence[:dot]
   end
 end
 

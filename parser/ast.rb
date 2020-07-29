@@ -63,3 +63,12 @@ class ClassExpression
     @body = body
   end
 end
+
+class CallExpression
+  attr_reader :target, :method
+
+  def initialize(target, method)
+    @target = target
+    @method = method
+  end
+end
