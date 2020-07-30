@@ -9,6 +9,16 @@ class Parser
     @infix_parselets = {}
   end
 
+  def parse
+    ast = parse_expression
+
+    unless @tokens.empty?
+      raise "Didn't finish parsing. Stopped at #{@tokens.first.inspect}"
+    end
+
+    ast
+  end
+
   def parse_expression(precedence = 0)
     token = next_token
     prefix_parselet = @prefix_parselets[token.type]
@@ -101,4 +111,4 @@ p.infix(:lparen, ArgParselet)
 p.register(:int, IntParselet)
 
 require 'pp'
-pp p.parse_expression
+pp p.parse
