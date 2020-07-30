@@ -65,10 +65,23 @@ class ClassExpression
 end
 
 class CallExpression
-  attr_reader :target, :method
+  attr_reader :target, :method, :args
 
-  def initialize(target, method)
+  def initialize(target, method, args = ArgList.new)
     @target = target
     @method = method
+    @args = args
+  end
+end
+
+class ArgList
+  attr_reader :args
+
+  def initialize
+    @args = []
+  end
+
+  def << arg
+    @args << arg
   end
 end

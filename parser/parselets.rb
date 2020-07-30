@@ -59,6 +59,33 @@ class DotCallParselet
   end
 end
 
+class ArgParselet
+  def self.parse(parser, left, token)
+    args = ArgList.new
+
+    next_arg(args, parser)
+
+    while parser.peek? :comma
+      parser.next_token(:comma)
+      next_arg(args, parser)
+    end
+
+    parser.next_token
+
+    CallExpression.new(nil, left, args)
+  end
+
+  def self.next_arg(args, parser)
+    unless parser.peek? :rparen
+      args << parser.parse_expression(precedence(self))
+    end
+  end
+
+  def self.precedence(_)
+    Precedence[:call]
+  end
+end
+
 class IfCondParselet
   def self.parse(parser, token)
     condition = parser.parse_expression
