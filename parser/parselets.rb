@@ -82,7 +82,7 @@ class ArgParselet
   end
 
   def self.precedence(_)
-    Precedence[:call]
+    1
   end
 end
 
@@ -132,5 +132,11 @@ class BlockParser
     end
 
     be
+  end
+end
+
+class IntParselet
+  def self.parse(parser, token)
+    Int.new(token.text.to_i)
   end
 end

@@ -85,3 +85,11 @@ class ArgList
     @args << arg
   end
 end
+
+class Int
+  attr_reader :value
+
+  def initialize(value)
+    @value = value
+  end
+end
