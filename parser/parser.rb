@@ -32,7 +32,7 @@ class Parser
     token = @tokens.shift
 
     if type and type != token.type
-      raise "Expected `#{type}` token but got `#{token.type}`!"
+      raise "Expected `#{type}` token but got `#{token.inspect}`!"
     end
 
     token
