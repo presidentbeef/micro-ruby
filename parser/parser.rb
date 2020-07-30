@@ -53,6 +53,10 @@ class Parser
     @tokens.first
   end
 
+  def peek?(token_type)
+    @tokens.first.type == token_type
+  end
+
   def register(token_type, parselet)
     @prefix_parselets[token_type] = parselet
   end
