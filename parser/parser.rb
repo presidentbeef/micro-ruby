@@ -13,7 +13,7 @@ class Parser
     ast = parse_expression
 
     unless @tokens.empty?
-      raise "Didn't finish parsing. Stopped at #{@tokens.first.inspect}"
+      raise "Didn't finish parsing. Stopped at #{@tokens.peek.inspect}"
     end
 
     ast
@@ -39,7 +39,7 @@ class Parser
   end
 
   def next_token(type = nil)
-    token = @tokens.shift
+    token = @tokens.next_token
 
     if type and type != token.type
       raise "Expected `#{type}` token but got `#{token.inspect}`!"
@@ -60,11 +60,11 @@ class Parser
   end
 
   def peek 
-    @tokens.first
+    @tokens.peek
   end
 
   def peek?(token_type)
-    @tokens.first.type == token_type
+    @tokens.peek.type == token_type
   end
 
   def register(token_type, parselet)
@@ -88,17 +88,8 @@ def t(*args)
   Token.new(*args)
 end
 
-tokens = [
-  Token.new(:if),
-  Token.new(:name, 'a'),
-  Token.new(:name, 'b'),
-  Token.new(:plus),
-  Token.new(:name, 'c'),
-  Token.new(:name, 'd'),
-  Token.new(:else),
-  Token.new(:name, 'e'),
-  Token.new(:end)
-]
+tokens = Lexer.new(Reader.new("1 + 2"))
+
 p = Parser.new(tokens)
 p.binary_op(:plus)
 p.binary_op(:gt)
