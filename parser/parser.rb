@@ -92,7 +92,7 @@ tokens = Lexer.new(Reader.new(<<RUBY))
 if x > 1
   a = 2 + 10
 else
-  y = a
+  y = a.b
 end
 RUBY
 

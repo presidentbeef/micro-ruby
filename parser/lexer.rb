@@ -92,6 +92,8 @@ class Lexer
         return Token.new(:lt, '<')
       when '='
         return Token.new(:assign, '=')
+      when '.'
+        return Token.new(:dot)
       when /\s/
         next
       when /[0-9]/
