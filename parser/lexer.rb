@@ -8,6 +8,16 @@ class Token
   end
 end
 
+Keywords = [
+  'case',
+  'class',
+  'else',
+  'end',
+  'if',
+  'module',
+  'when',
+]
+
 class Reader
   def initialize(input_string)
     @str = input_string
@@ -121,7 +131,12 @@ class Lexer
         name << c
       else
         @reader.back
-        return Token.new(:name, name)
+
+        if Keywords.include? name
+          return Token.new(name.to_sym)
+        else
+          return Token.new(:name, name)
+        end
       end
     end
   end
