@@ -98,6 +98,8 @@ class Lexer
         return lex_int(r)
       when /[a-zA-Z]/
         return lex_name(r)
+      else
+        raise "Unexpected character: `#{r}`"
       end
     end
   end
