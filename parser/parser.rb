@@ -88,11 +88,18 @@ def t(*args)
   Token.new(*args)
 end
 
-tokens = Lexer.new(Reader.new("1 + 2"))
+tokens = Lexer.new(Reader.new(<<RUBY))
+if x > 1
+  a = 2 + 10
+else
+  y = a
+end
+RUBY
 
 p = Parser.new(tokens)
 p.binary_op(:plus)
 p.binary_op(:gt)
+p.infix(:assign, AssignParselet)
 p.prefix(:minus)
 p.infix(:dot, DotCallParselet)
 p.register(:name, NameParselet)

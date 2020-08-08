@@ -6,6 +6,15 @@ class NameExpression
   end
 end
 
+class AssignExpression
+  attr_reader :name, :value
+
+  def initialize(name, value)
+    @name = name
+    @value = value
+  end
+end
+
 class PrefixExpression
   attr_reader :op
   attr_reader :operand

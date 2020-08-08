@@ -14,8 +14,24 @@ class NameParselet
     NameExpression.new(token.text)
   end
 
-  def self.precedence
+  def self.precedence(*)
     Precedence[:call]
+  end
+end
+
+class AssignParselet
+  def self.parse(parser, left, token)
+    right = parser.parse_expression(0)
+
+    unless left.is_a? NameExpression
+      raise "Cannot assign to anything but a name: #{left.inspect}"
+    end
+
+    AssignExpression.new(left, right)
+  end
+
+  def self.precedence(*)
+    Precedence[:assign]
   end
 end
 
