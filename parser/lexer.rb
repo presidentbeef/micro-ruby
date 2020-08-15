@@ -8,14 +8,34 @@ class Token
   end
 end
 
-Keywords = [
-  'case',
-  'class',
-  'else',
-  'end',
-  'if',
-  'module',
-  'when',
+Keywords = %w[
+  and
+  begin
+  break
+  case
+  class
+  def
+  do
+  else
+  end
+  ensure
+  false
+  if
+  module
+  next
+  nil
+  not
+  or
+  rescue
+  return
+  self
+  super
+  true
+  unless
+  until
+  when
+  while
+  yield
 ]
 
 class Reader
