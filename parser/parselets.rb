@@ -136,7 +136,7 @@ class ClassParselet
   def self.parse(parser, token)
     name = NameParselet.parse(parser, parser.next_token(:const))
 
-    if parser.peek.type == :less_than
+    if parser.peek.type == :lt
       parser.next_token
       parent = NameParselet.parse(parser, parser.next_token(:const))
     else
@@ -144,6 +144,7 @@ class ClassParselet
     end
 
     body = BlockParser.parse(parser)
+    parser.next_token(:end)
 
     ClassExpression.new(name, parent, body)
   end

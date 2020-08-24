@@ -15,6 +15,16 @@ class AssignExpression
   end
 end
 
+class ClassExpression
+  attr_reader :name, :parent, :body
+
+  def initialize(name, parent, body)
+    @name = name
+    @parent = parent
+    @body = body
+  end
+end
+
 class ConstExpression < NameExpression
 end
 
