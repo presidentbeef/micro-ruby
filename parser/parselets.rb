@@ -19,6 +19,16 @@ class NameParselet
   end
 end
 
+class ConstParselet
+  def self.parse(parser, token)
+    ConstExpression.new(token.text)
+  end
+
+  def self.precedence(*)
+    Precedence[:call]
+  end
+end
+
 class AssignParselet
   def self.parse(parser, left, token)
     right = parser.parse_expression(0)

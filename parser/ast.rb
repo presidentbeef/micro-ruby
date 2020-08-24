@@ -15,6 +15,9 @@ class AssignExpression
   end
 end
 
+class ConstExpression < NameExpression
+end
+
 class PrefixExpression
   attr_reader :op
   attr_reader :operand

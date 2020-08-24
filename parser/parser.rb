@@ -107,6 +107,7 @@ p.register(:if, IfCondParselet)
 p.register(:class, ClassParselet)
 p.infix(:lparen, ArgParselet)
 p.register(:int, IntParselet)
+p.register(:const, ConstParselet)
 
 require 'pp'
 pp p.parse

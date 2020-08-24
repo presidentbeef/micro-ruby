@@ -158,6 +158,8 @@ class Lexer
 
         if Keywords.include? name
           return Token.new(name.to_sym)
+        elsif name.match?(/^[A-Z]/)
+          return Token.new(:const, name)
         else
           return Token.new(:name, name)
         end
