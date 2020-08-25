@@ -25,6 +25,15 @@ class ClassExpression
   end
 end
 
+class ModuleExpression
+  attr_reader :name, :body
+
+  def initialize(name, body)
+    @name = name
+    @body = body
+  end
+end
+
 class ConstExpression < NameExpression
 end
 

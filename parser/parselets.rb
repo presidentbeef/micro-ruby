@@ -150,6 +150,19 @@ class ClassParselet
   end
 end
 
+class ModuleParselet
+  attr_reader :name, :body
+
+  def self.parse(parser, token)
+    name = NameParselet.parse(parser, parser.next_token(:const))
+
+    body = BlockParser.parse(parser)
+    parser.next_token(:end)
+
+    ModuleExpression.new(name, body)
+  end
+end
+
 class BlockParser
   def self.parse(parser, end_tokens = [:end])
     be = BlockExpression.new
