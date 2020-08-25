@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Token
   attr_accessor :type, :text, :pos
 
