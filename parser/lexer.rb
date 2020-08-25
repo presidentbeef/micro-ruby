@@ -114,6 +114,12 @@ class Lexer
         return Token.new(:assign, '=')
       when '.'
         return Token.new(:dot)
+      when '('
+        return Token.new(:lparen)
+      when ')'
+        return Token.new(:rparen)
+      when ','
+        return Token.new(:comma)
       when /\s/
         next
       when /[0-9]/
