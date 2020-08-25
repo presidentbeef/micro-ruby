@@ -25,6 +25,37 @@ class ClassExpression
   end
 end
 
+class CallExpression
+  attr_reader :target, :method, :args
+
+  def initialize(target, method, args = ArgList.new)
+    @target = target
+    @method = method
+    @args = args
+  end
+end
+
+class ConstExpression < NameExpression
+end
+
+class IfExpression
+  attr_reader :cond, :then_branch, :else_branch
+
+  def initialize(cond, then_branch, else_branch)
+    @cond = cond
+    @then_branch = then_branch
+    @else_branch = else_branch
+  end
+end
+
+class Int
+  attr_reader :value
+
+  def initialize(value)
+    @value = value
+  end
+end
+
 class ModuleExpression
   attr_reader :name, :body
 
@@ -34,12 +65,10 @@ class ModuleExpression
   end
 end
 
-class ConstExpression < NameExpression
-end
+# Generic / Helper ASTs
 
 class PrefixExpression
-  attr_reader :op
-  attr_reader :operand
+  attr_reader :op, :operand
 
   def initialize(op, operand)
     @op = op
@@ -59,13 +88,15 @@ class BinaryOpExpression
   end
 end
 
-class IfExpression
-  attr_reader :cond, :then_branch, :else_branch
+class ArgList
+  attr_reader :args
 
-  def initialize(cond, then_branch, else_branch)
-    @cond = cond
-    @then_branch = then_branch
-    @else_branch = else_branch
+  def initialize
+    @args = []
+  end
+
+  def << arg
+    @args << arg
   end
 end
 
@@ -82,45 +113,5 @@ class BlockExpression
 
   def empty?
     @exps.empty?
-  end
-end
-
-class ClassExpression
-  attr_reader :name, :parent, :body
-
-  def initialize(name, parent, body)
-    @name = name
-    @parent = parent
-    @body = body
-  end
-end
-
-class CallExpression
-  attr_reader :target, :method, :args
-
-  def initialize(target, method, args = ArgList.new)
-    @target = target
-    @method = method
-    @args = args
-  end
-end
-
-class ArgList
-  attr_reader :args
-
-  def initialize
-    @args = []
-  end
-
-  def << arg
-    @args << arg
-  end
-end
-
-class Int
-  attr_reader :value
-
-  def initialize(value)
-    @value = value
   end
 end

@@ -9,26 +9,6 @@ Precedence = {
   call: 8
 }.freeze
 
-class NameParselet
-  def self.parse(parser, token)
-    NameExpression.new(token.text)
-  end
-
-  def self.precedence(*)
-    Precedence[:call]
-  end
-end
-
-class ConstParselet
-  def self.parse(parser, token)
-    ConstExpression.new(token.text)
-  end
-
-  def self.precedence(*)
-    Precedence[:call]
-  end
-end
-
 class AssignParselet
   def self.parse(parser, left, token)
     right = parser.parse_expression(0)
@@ -44,6 +24,96 @@ class AssignParselet
     Precedence[:assign]
   end
 end
+
+class ClassParselet
+  attr_reader :name, :parent, :body
+
+  def self.parse(parser, token)
+    name = NameParselet.parse(parser, parser.next_token(:const))
+
+    if parser.peek.type == :lt
+      parser.next_token
+      parent = NameParselet.parse(parser, parser.next_token(:const))
+    else
+      parent = nil
+    end
+
+    body = BlockParser.parse(parser)
+    parser.next_token(:end)
+
+    ClassExpression.new(name, parent, body)
+  end
+end
+
+class ConstParselet
+  def self.parse(parser, token)
+    ConstExpression.new(token.text)
+  end
+
+  def self.precedence(*)
+    Precedence[:call]
+  end
+end
+
+class DotCallParselet
+  def self.parse(parser, left, token)
+    right = parser.parse_expression(precedence(token))
+    CallExpression.new(left, right)
+  end
+
+  def self.precedence(_)
+    Precedence[:call]
+  end
+end
+class IfCondParselet
+  def self.parse(parser, token)
+    condition = parser.parse_expression
+
+    then_branch = BlockParser.parse(parser, [:else, :elsif, :end])
+
+    case parser.next_token.type
+    when :else
+      else_branch = BlockParser.parse(parser)
+      parser.next_token(:end)
+    when :elsif
+      else_branch = IfCondParselet.parse(parser, nil)
+    end
+
+    return IfExpression.new(condition, then_branch, else_branch)
+  end
+end
+
+class IntParselet
+  def self.parse(parser, token)
+    Int.new(token.text.to_i)
+  end
+end
+
+class ModuleParselet
+  attr_reader :name, :body
+
+  def self.parse(parser, token)
+    name = NameParselet.parse(parser, parser.next_token(:const))
+
+    body = BlockParser.parse(parser)
+    parser.next_token(:end)
+
+    ModuleExpression.new(name, body)
+  end
+end
+
+class NameParselet
+  def self.parse(parser, token)
+    NameExpression.new(token.text)
+  end
+
+  def self.precedence(*)
+    Precedence[:call]
+  end
+end
+
+
+# Helper / Generic Parselets
 
 class PrefixOpParselet
   def self.parse(parser, token)
@@ -74,17 +144,7 @@ class BinaryOpParselet
   end
 end
 
-class DotCallParselet
-  def self.parse(parser, left, token)
-    right = parser.parse_expression(precedence(token))
-    CallExpression.new(left, right)
-  end
-
-  def self.precedence(_)
-    Precedence[:call]
-  end
-end
-
+# Call argument parser
 class ArgParselet
   def self.parse(parser, left, token)
     args = ArgList.new
@@ -112,57 +172,8 @@ class ArgParselet
   end
 end
 
-class IfCondParselet
-  def self.parse(parser, token)
-    condition = parser.parse_expression
-
-    then_branch = BlockParser.parse(parser, [:else, :elsif, :end])
-
-    case parser.next_token.type
-    when :else
-      else_branch = BlockParser.parse(parser)
-      parser.next_token(:end)
-    when :elsif
-      else_branch = IfCondParselet.parse(parser, nil)
-    end
-
-    return IfExpression.new(condition, then_branch, else_branch)
-  end
-end
-
-class ClassParselet
-  attr_reader :name, :parent, :body
-
-  def self.parse(parser, token)
-    name = NameParselet.parse(parser, parser.next_token(:const))
-
-    if parser.peek.type == :lt
-      parser.next_token
-      parent = NameParselet.parse(parser, parser.next_token(:const))
-    else
-      parent = nil
-    end
-
-    body = BlockParser.parse(parser)
-    parser.next_token(:end)
-
-    ClassExpression.new(name, parent, body)
-  end
-end
-
-class ModuleParselet
-  attr_reader :name, :body
-
-  def self.parse(parser, token)
-    name = NameParselet.parse(parser, parser.next_token(:const))
-
-    body = BlockParser.parse(parser)
-    parser.next_token(:end)
-
-    ModuleExpression.new(name, body)
-  end
-end
-
+# Helper to parse a block of expressions
+# into an array of expressions
 class BlockParser
   def self.parse(parser, end_tokens = [:end])
     be = BlockExpression.new
@@ -172,11 +183,5 @@ class BlockParser
     end
 
     be
-  end
-end
-
-class IntParselet
-  def self.parse(parser, token)
-    Int.new(token.text.to_i)
   end
 end
