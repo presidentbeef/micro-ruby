@@ -7,6 +7,23 @@ class Parser
     @tokens = tokens
     @prefix_parselets = {}
     @infix_parselets = {}
+    initialize_parselets
+  end
+
+  def initialize_parselets
+    infix(:assign, AssignParselet)
+    infix(:dot, DotCallParselet)
+    infix(:lparen, ArgParselet)
+    prefix(:minus)
+    binary_op(:plus)
+    binary_op(:gt)
+    binary_op(:minus)
+    register(:class, ClassParselet)
+    register(:const, ConstParselet)
+    register(:if, IfCondParselet)
+    register(:int, IntParselet)
+    register(:module, ModuleParselet)
+    register(:name, NameParselet)
   end
 
   def parse
@@ -83,33 +100,3 @@ class Parser
     @infix_parselets[token_type] = parselet
   end
 end
-
-def t(*args)
-  Token.new(*args)
-end
-
-tokens = Lexer.new(Reader.new(<<RUBY))
-if x > 1
-  a = 2 + 10
-else
-  y = a.b
-end
-RUBY
-
-p = Parser.new(tokens)
-p.binary_op(:plus)
-p.binary_op(:gt)
-p.infix(:assign, AssignParselet)
-p.prefix(:minus)
-p.infix(:dot, DotCallParselet)
-p.register(:name, NameParselet)
-p.register(:if, IfCondParselet)
-p.register(:class, ClassParselet)
-p.infix(:lparen, ArgParselet)
-p.register(:int, IntParselet)
-p.register(:const, ConstParselet)
-p.register(:class, ClassParselet)
-p.register(:module, ModuleParselet)
-
-require 'pp'
-pp p.parse
