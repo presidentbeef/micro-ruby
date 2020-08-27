@@ -159,7 +159,7 @@ class Lexer
 
       if c.nil?
         return Token.new(:name, name)
-      elsif c.match?(/[a-z]/)
+      elsif c.match?(/[a-zA-Z0-9_]/)
         name << c
       else
         @reader.back
