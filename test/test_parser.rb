@@ -39,6 +39,13 @@ class TestParserBasics < Minitest::Test
     RUBY
   end
 
+  def test_class_inheritance
+    assert_parses <<~RUBY
+    class Test < Test2
+    end
+    RUBY
+  end
+
   def test_module
     assert_parses <<~RUBY
     module TestModule
