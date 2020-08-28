@@ -46,6 +46,23 @@ class TestParserBasics < Minitest::Test
     RUBY
   end
 
+  def test_def_method
+    assert_parses <<~RUBY
+    def a(x)
+    end
+    RUBY
+  end
+
+  def test_class_with_methods
+    assert_parses <<~RUBY
+    class Test
+      def test
+        a.b(1)
+      end
+    end
+    RUBY
+  end
+
   def test_const
     assert_parses 'CONST'
   end

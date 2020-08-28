@@ -24,6 +24,7 @@ class Parser
     register(:int, IntParselet)
     register(:module, ModuleParselet)
     register(:name, NameParselet)
+    register(:def, MethodParselet)
   end
 
   def parse

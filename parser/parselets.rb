@@ -55,6 +55,22 @@ class ConstParselet
   end
 end
 
+class MethodParselet
+  def self.parse(parser, token)
+    name = parser.next_token(:name)
+
+    if parser.peek? :lparen
+      parser.next_token(:lparen)
+      params = ParameterParselet.parse(parser)
+    end
+
+    body = BlockParser.parse(parser)
+    parser.next_token(:end)
+
+    MethodExpression.new(name, params, body)
+  end
+end
+
 class DotCallParselet
   def self.parse(parser, left, token)
     right = parser.parse_expression(precedence(token))
@@ -65,6 +81,7 @@ class DotCallParselet
     Precedence[:call]
   end
 end
+
 class IfCondParselet
   def self.parse(parser, token)
     condition = parser.parse_expression
@@ -183,5 +200,32 @@ class BlockParser
     end
 
     be
+  end
+end
+
+class ParameterParselet
+  def self.parse(parser)
+    args = ArgList.new
+
+    next_arg(args, parser)
+
+    while parser.peek? :comma
+      parser.next_token(:comma)
+      next_arg(args, parser)
+    end
+
+    parser.next_token(:rparen)
+
+    args
+  end
+
+  def self.next_arg(args, parser)
+    unless parser.peek? :rparen
+      args << parser.parse_expression(precedence(self))
+    end
+  end
+
+  def self.precedence(_)
+    1
   end
 end
