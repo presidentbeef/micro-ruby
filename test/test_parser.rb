@@ -86,4 +86,16 @@ class TestParserBasics < Minitest::Test
     end
     RUBY
   end
+
+  def test_nil
+    assert_parses 'nil'
+  end
+
+  def test_true
+    assert_parses 'true'
+  end
+
+  def test_false
+    assert_parses 'false'
+  end
 end

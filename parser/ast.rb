@@ -1,11 +1,3 @@
-class NameExpression
-  attr_reader :name
-
-  def initialize(name)
-    @name = name
-  end
-end
-
 class AssignExpression
   attr_reader :name, :value
 
@@ -35,7 +27,20 @@ class CallExpression
   end
 end
 
+class NameExpression
+  attr_reader :name
+
+  def initialize(name)
+    @name = name
+  end
+end
+
 class ConstExpression < NameExpression
+end
+
+class FalseExpression
+  def initialize(token)
+  end
 end
 
 class IfExpression
@@ -72,6 +77,16 @@ class ModuleExpression
   def initialize(name, body)
     @name = name
     @body = body
+  end
+end
+
+class NilExpression
+  def initialize(token)
+  end
+end
+
+class TrueExpression
+  def initialize(token)
   end
 end
 

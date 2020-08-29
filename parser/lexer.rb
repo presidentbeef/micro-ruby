@@ -157,12 +157,10 @@ class Lexer
     loop do
       c = @reader.next_rune
 
-      if c.nil?
-        return Token.new(:name, name)
-      elsif c.match?(/[a-zA-Z0-9_]/)
+      if c and c.match?(/[a-zA-Z0-9_]/)
         name << c
       else
-        @reader.back
+        @reader.back unless c.nil?
 
         if Keywords.include? name
           return Token.new(name.to_sym)

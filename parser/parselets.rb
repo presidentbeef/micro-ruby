@@ -229,3 +229,18 @@ class ParameterParselet
     1
   end
 end
+
+class BasicValueParselet
+  def self.parse(parser, token)
+    case token.text
+    when :nil
+      NilExpression.new(token)
+    when :true
+      TrueExpression.new(token)
+    when :false
+      FalseExpression.new(token)
+    else
+      raise "Unknown value: #{token}"
+    end
+  end
+end
