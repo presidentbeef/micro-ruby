@@ -1,142 +1,144 @@
-class AssignExpression
-  attr_reader :name, :value
+module AST
+  class Assign
+    attr_reader :name, :value
 
-  def initialize(name, value)
-    @name = name
-    @value = value
-  end
-end
-
-class ClassExpression
-  attr_reader :name, :parent, :body
-
-  def initialize(name, parent, body)
-    @name = name
-    @parent = parent
-    @body = body
-  end
-end
-
-class CallExpression
-  attr_reader :target, :method, :args
-
-  def initialize(target, method, args = ArgList.new)
-    @target = target
-    @method = method
-    @args = args
-  end
-end
-
-class NameExpression
-  attr_reader :name
-
-  def initialize(name)
-    @name = name
-  end
-end
-
-class ConstExpression < NameExpression
-end
-
-class FalseExpression
-  def initialize(token)
-  end
-end
-
-class IfExpression
-  attr_reader :cond, :then_branch, :else_branch
-
-  def initialize(cond, then_branch, else_branch)
-    @cond = cond
-    @then_branch = then_branch
-    @else_branch = else_branch
-  end
-end
-
-class Int
-  attr_reader :value
-
-  def initialize(value)
-    @value = value
-  end
-end
-
-class MethodExpression
-  attr_reader :name, :params, :body
-
-  def initialize(name, params, body)
-    @name = name
-    @params = params
-    @body = body
-  end
-end
-
-class ModuleExpression
-  attr_reader :name, :body
-
-  def initialize(name, body)
-    @name = name
-    @body = body
-  end
-end
-
-class NilExpression
-  def initialize(token)
-  end
-end
-
-class TrueExpression
-  def initialize(token)
-  end
-end
-
-# Generic / Helper ASTs
-
-class PrefixExpression
-  attr_reader :op, :operand
-
-  def initialize(op, operand)
-    @op = op
-    @operand = operand
-  end
-end
-
-class BinaryOpExpression
-  attr_reader :left
-  attr_reader :right
-  attr_reader :op
-
-  def initialize(left, op, right)
-    @left = left
-    @op = op
-    @right = right
-  end
-end
-
-class ArgList
-  attr_reader :args
-
-  def initialize
-    @args = []
+    def initialize(name, value)
+      @name = name
+      @value = value
+    end
   end
 
-  def << arg
-    @args << arg
-  end
-end
+  class Class
+    attr_reader :name, :parent, :body
 
-class BlockExpression
-  attr_reader :exps
-
-  def initialize
-    @exps = []
+    def initialize(name, parent, body)
+      @name = name
+      @parent = parent
+      @body = body
+    end
   end
 
-  def << exp
-    @exps << exp
+  class Call
+    attr_reader :target, :method, :args
+
+    def initialize(target, method, args = ArgList.new)
+      @target = target
+      @method = method
+      @args = args
+    end
   end
 
-  def empty?
-    @exps.empty?
+  class Name
+    attr_reader :name
+
+    def initialize(name)
+      @name = name
+    end
+  end
+
+  class Const < Name
+  end
+
+  class False
+    def initialize(token)
+    end
+  end
+
+  class If
+    attr_reader :cond, :then_branch, :else_branch
+
+    def initialize(cond, then_branch, else_branch)
+      @cond = cond
+      @then_branch = then_branch
+      @else_branch = else_branch
+    end
+  end
+
+  class Int
+    attr_reader :value
+
+    def initialize(value)
+      @value = value
+    end
+  end
+
+  class Method
+    attr_reader :name, :params, :body
+
+    def initialize(name, params, body)
+      @name = name
+      @params = params
+      @body = body
+    end
+  end
+
+  class Module
+    attr_reader :name, :body
+
+    def initialize(name, body)
+      @name = name
+      @body = body
+    end
+  end
+
+  class Nil
+    def initialize(token)
+    end
+  end
+
+  class True
+    def initialize(token)
+    end
+  end
+
+  # Generic / Helper ASTs
+
+  class Prefix
+    attr_reader :op, :operand
+
+    def initialize(op, operand)
+      @op = op
+      @operand = operand
+    end
+  end
+
+  class BinaryOp
+    attr_reader :left
+    attr_reader :right
+    attr_reader :op
+
+    def initialize(left, op, right)
+      @left = left
+      @op = op
+      @right = right
+    end
+  end
+
+  class ArgList
+    attr_reader :args
+
+    def initialize
+      @args = []
+    end
+
+    def << arg
+      @args << arg
+    end
+  end
+
+  class Block
+    attr_reader :exps
+
+    def initialize
+      @exps = []
+    end
+
+    def << exp
+      @exps << exp
+    end
+
+    def empty?
+      @exps.empty?
+    end
   end
 end

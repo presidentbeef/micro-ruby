@@ -1,246 +1,248 @@
-Precedence = {
-  assign: 1,
-  and_or: 2,
-  equality: 3,
-  compare: 4,
-  term: 5,
-  product: 6,
-  unary: 7,
-  call: 8
-}.freeze
+module Parselet
+  Precedence = {
+    assign: 1,
+    and_or: 2,
+    equality: 3,
+    compare: 4,
+    term: 5,
+    product: 6,
+    unary: 7,
+    call: 8
+  }.freeze
 
-class AssignParselet
-  def self.parse(parser, left, token)
-    right = parser.parse_expression(0)
+  class Assign
+    def self.parse(parser, left, token)
+      right = parser.parse_expression(0)
 
-    unless left.is_a? NameExpression
-      raise "Cannot assign to anything but a name: #{left.inspect}"
+      unless left.is_a? AST::Name
+        raise "Cannot assign to anything but a name: #{left.inspect}"
+      end
+
+      AST::Assign.new(left, right)
     end
 
-    AssignExpression.new(left, right)
-  end
-
-  def self.precedence(*)
-    Precedence[:assign]
-  end
-end
-
-class ClassParselet
-  attr_reader :name, :parent, :body
-
-  def self.parse(parser, token)
-    name = NameParselet.parse(parser, parser.next_token(:const))
-
-    if parser.peek.type == :lt
-      parser.next_token
-      parent = NameParselet.parse(parser, parser.next_token(:const))
-    else
-      parent = nil
+    def self.precedence(*)
+      Precedence[:assign]
     end
-
-    body = BlockParser.parse(parser)
-    parser.next_token(:end)
-
-    ClassExpression.new(name, parent, body)
-  end
-end
-
-class ConstParselet
-  def self.parse(parser, token)
-    ConstExpression.new(token.text)
   end
 
-  def self.precedence(*)
-    Precedence[:call]
-  end
-end
+  class Class
+    attr_reader :name, :parent, :body
 
-class MethodParselet
-  def self.parse(parser, token)
-    name = parser.next_token(:name)
+    def self.parse(parser, token)
+      name = Name.parse(parser, parser.next_token(:const))
 
-    if parser.peek? :lparen
-      parser.next_token(:lparen)
-      params = ParameterParselet.parse(parser)
-    end
+      if parser.peek.type == :lt
+        parser.next_token
+        parent = Name.parse(parser, parser.next_token(:const))
+      else
+        parent = nil
+      end
 
-    body = BlockParser.parse(parser)
-    parser.next_token(:end)
-
-    MethodExpression.new(name, params, body)
-  end
-end
-
-class DotCallParselet
-  def self.parse(parser, left, token)
-    right = parser.parse_expression(precedence(token))
-    CallExpression.new(left, right)
-  end
-
-  def self.precedence(_)
-    Precedence[:call]
-  end
-end
-
-class IfCondParselet
-  def self.parse(parser, token)
-    condition = parser.parse_expression
-
-    then_branch = BlockParser.parse(parser, [:else, :elsif, :end])
-
-    case parser.next_token.type
-    when :else
-      else_branch = BlockParser.parse(parser)
+      body = BlockParser.parse(parser)
       parser.next_token(:end)
-    when :elsif
-      else_branch = IfCondParselet.parse(parser, nil)
-    end
 
-    return IfExpression.new(condition, then_branch, else_branch)
-  end
-end
-
-class IntParselet
-  def self.parse(parser, token)
-    Int.new(token.text.to_i)
-  end
-end
-
-class ModuleParselet
-  attr_reader :name, :body
-
-  def self.parse(parser, token)
-    name = NameParselet.parse(parser, parser.next_token(:const))
-
-    body = BlockParser.parse(parser)
-    parser.next_token(:end)
-
-    ModuleExpression.new(name, body)
-  end
-end
-
-class NameParselet
-  def self.parse(parser, token)
-    NameExpression.new(token.text)
-  end
-
-  def self.precedence(*)
-    Precedence[:call]
-  end
-end
-
-
-# Helper / Generic Parselets
-
-class PrefixOpParselet
-  def self.parse(parser, token)
-    operand = parser.parse_expression(Precedence[:unary])
-    PrefixExpression.new(token.type, operand)
-  end
-end
-
-class BinaryOpParselet
-  def self.parse(parser, left, token)
-    right = parser.parse_expression(precedence(token.type))
-    BinaryOpExpression.new(left, token.type, right)
-  end
-
-  def self.precedence(op)
-    case op
-    when :plus, :minus
-      Precedence[:term]
-    when :prod, :div
-      Precedence[:product]
-    when :gt, :lt
-      Precedence[:compare]
-    when :equal
-      Precedence[:equality]
-    else
-      raise "Unknown operator: #{op}"
+      AST::Class.new(name, parent, body)
     end
   end
-end
 
-# Call argument parser
-class ArgParselet
-  def self.parse(parser, left, token)
-    args = ArgList.new
+  class Const
+    def self.parse(parser, token)
+      AST::Const.new(token.text)
+    end
 
-    next_arg(args, parser)
+    def self.precedence(*)
+      Precedence[:call]
+    end
+  end
 
-    while parser.peek? :comma
-      parser.next_token(:comma)
+  class Method
+    def self.parse(parser, token)
+      name = parser.next_token(:name)
+
+      if parser.peek? :lparen
+        parser.next_token(:lparen)
+        params = Parameter.parse(parser)
+      end
+
+      body = BlockParser.parse(parser)
+      parser.next_token(:end)
+
+      AST::Method.new(name, params, body)
+    end
+  end
+
+  class DotCall
+    def self.parse(parser, left, token)
+      right = parser.parse_expression(precedence(token))
+      AST::Call.new(left, right)
+    end
+
+    def self.precedence(_)
+      Precedence[:call]
+    end
+  end
+
+  class IfCond
+    def self.parse(parser, token)
+      condition = parser.parse_expression
+
+      then_branch = BlockParser.parse(parser, [:else, :elsif, :end])
+
+      case parser.next_token.type
+      when :else
+        else_branch = BlockParser.parse(parser)
+        parser.next_token(:end)
+      when :elsif
+        else_branch = IfCond.parse(parser, nil)
+      end
+
+      return AST::If.new(condition, then_branch, else_branch)
+    end
+  end
+
+  class Int
+    def self.parse(parser, token)
+      AST::Int.new(token.text.to_i)
+    end
+  end
+
+  class Module
+    attr_reader :name, :body
+
+    def self.parse(parser, token)
+      name = Name.parse(parser, parser.next_token(:const))
+
+      body = BlockParser.parse(parser)
+      parser.next_token(:end)
+
+      AST::Module.new(name, body)
+    end
+  end
+
+  class Name
+    def self.parse(parser, token)
+      AST::Name.new(token.text)
+    end
+
+    def self.precedence(*)
+      Precedence[:call]
+    end
+  end
+
+
+  # Helper / Generic Parselets
+
+  class PrefixOp
+    def self.parse(parser, token)
+      operand = parser.parse_expression(Precedence[:unary])
+      AST::Prefix.new(token.type, operand)
+    end
+  end
+
+  class BinaryOp
+    def self.parse(parser, left, token)
+      right = parser.parse_expression(precedence(token.type))
+      AST::BinaryOp.new(left, token.type, right)
+    end
+
+    def self.precedence(op)
+      case op
+      when :plus, :minus
+        Precedence[:term]
+      when :prod, :div
+        Precedence[:product]
+      when :gt, :lt
+        Precedence[:compare]
+      when :equal
+        Precedence[:equality]
+      else
+        raise "Unknown operator: #{op}"
+      end
+    end
+  end
+
+  # Call argument parser
+  class Arg
+    def self.parse(parser, left, token)
+      args = AST::ArgList.new
+
       next_arg(args, parser)
+
+      while parser.peek? :comma
+        parser.next_token(:comma)
+        next_arg(args, parser)
+      end
+
+      parser.next_token
+
+      AST::Call.new(nil, left, args)
     end
 
-    parser.next_token
+    def self.next_arg(args, parser)
+      unless parser.peek? :rparen
+        args << parser.parse_expression(precedence(self))
+      end
+    end
 
-    CallExpression.new(nil, left, args)
-  end
-
-  def self.next_arg(args, parser)
-    unless parser.peek? :rparen
-      args << parser.parse_expression(precedence(self))
+    def self.precedence(_)
+      1
     end
   end
 
-  def self.precedence(_)
-    1
-  end
-end
+  # Helper to parse a block of expressions
+  # into an array of expressions
+  class BlockParser
+    def self.parse(parser, end_tokens = [:end])
+      be = AST::Block.new
 
-# Helper to parse a block of expressions
-# into an array of expressions
-class BlockParser
-  def self.parse(parser, end_tokens = [:end])
-    be = BlockExpression.new
+      until end_tokens.include? parser.peek.type
+        be << parser.parse_expression
+      end
 
-    until end_tokens.include? parser.peek.type
-      be << parser.parse_expression
+      be
     end
-
-    be
   end
-end
 
-class ParameterParselet
-  def self.parse(parser)
-    args = ArgList.new
+  class Parameter
+    def self.parse(parser)
+      args = AST::ArgList.new
 
-    next_arg(args, parser)
-
-    while parser.peek? :comma
-      parser.next_token(:comma)
       next_arg(args, parser)
+
+      while parser.peek? :comma
+        parser.next_token(:comma)
+        next_arg(args, parser)
+      end
+
+      parser.next_token(:rparen)
+
+      args
     end
 
-    parser.next_token(:rparen)
+    def self.next_arg(args, parser)
+      unless parser.peek? :rparen
+        args << parser.parse_expression(precedence(self))
+      end
+    end
 
-    args
-  end
-
-  def self.next_arg(args, parser)
-    unless parser.peek? :rparen
-      args << parser.parse_expression(precedence(self))
+    def self.precedence(_)
+      1
     end
   end
 
-  def self.precedence(_)
-    1
-  end
-end
-
-class BasicValueParselet
-  def self.parse(parser, token)
-    case token.text
-    when :nil
-      NilExpression.new(token)
-    when :true
-      TrueExpression.new(token)
-    when :false
-      FalseExpression.new(token)
-    else
-      raise "Unknown value: #{token}"
+  class BasicValue
+    def self.parse(parser, token)
+      case token.text
+      when :nil
+        AST::Nil.new(token)
+      when :true
+        AST::True.new(token)
+      when :false
+        AST::False.new(token)
+      else
+        raise "Unknown value: #{token}"
+      end
     end
   end
 end

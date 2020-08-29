@@ -11,23 +11,23 @@ class Parser
   end
 
   def initialize_parselets
-    infix(:assign, AssignParselet)
-    infix(:dot, DotCallParselet)
-    infix(:lparen, ArgParselet)
+    infix(:assign, Parselet::Assign)
+    infix(:dot, Parselet::DotCall)
+    infix(:lparen, Parselet::Arg)
     prefix(:minus)
     binary_op(:plus)
     binary_op(:gt)
     binary_op(:minus)
-    register(:class, ClassParselet)
-    register(:const, ConstParselet)
-    register(:if, IfCondParselet)
-    register(:int, IntParselet)
-    register(:module, ModuleParselet)
-    register(:name, NameParselet)
-    register(:def, MethodParselet)
-    register(:nil, BasicValueParselet)
-    register(:true, BasicValueParselet)
-    register(:false, BasicValueParselet)
+    register(:class, Parselet::Class)
+    register(:const, Parselet::Const)
+    register(:if, Parselet::IfCond)
+    register(:int, Parselet::Int)
+    register(:module, Parselet::Module)
+    register(:name, Parselet::Name)
+    register(:def, Parselet::Method)
+    register(:nil, Parselet::BasicValue)
+    register(:true, Parselet::BasicValue)
+    register(:false, Parselet::BasicValue)
   end
 
   def parse
@@ -93,11 +93,11 @@ class Parser
   end
 
   def prefix(token_type)
-    @prefix_parselets[token_type] = PrefixOpParselet
+    @prefix_parselets[token_type] = Parselet::PrefixOp
   end
 
   def binary_op(token_type)
-    @infix_parselets[token_type] = BinaryOpParselet
+    @infix_parselets[token_type] = Parselet::BinaryOp
   end
 
   def infix(token_type, parselet)
