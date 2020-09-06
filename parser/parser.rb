@@ -14,6 +14,8 @@ class Parser
     infix(:assign, Parselet::Assign)
     infix(:dot, Parselet::DotCall)
     infix(:lparen, Parselet::Arg)
+    infix(:and, Parselet::And)
+    infix(:or, Parselet::Or)
     prefix(:minus)
     binary_op(:plus)
     binary_op(:gt)

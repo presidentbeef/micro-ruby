@@ -1,4 +1,13 @@
 module AST
+  class And
+    attr_reader :left, :right
+
+    def initialize(left, right)
+      @left = left
+      @right = right
+    end
+  end
+
   class Assign
     attr_reader :name, :value
 
@@ -84,6 +93,9 @@ module AST
   class Nil
     def initialize(token)
     end
+  end
+
+  class Or < And
   end
 
   class True

@@ -13,6 +13,14 @@ class TestParserBasics < Minitest::Test
     end
   end
 
+  def test_and
+    assert_parses '1 and 2', AST::And
+  end
+
+  def test_or
+    assert_parses 'a or b', AST::Or
+  end
+
   def test_integer
     assert_parses '1', AST::Int
   end

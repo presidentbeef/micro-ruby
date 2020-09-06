@@ -10,6 +10,27 @@ module Parselet
     call: 8
   }.freeze
 
+  class And
+    def self.parse(parser, left, token)
+      right = parser.parse_expression(Precedence[:and_or])
+
+      case token.type
+      when :and
+        AST::And.new(left, right)
+      when :or
+        AST::Or.new(left, right)
+      else
+        raise "Unknown token type: #{token} instead of and/or"
+      end
+    end
+
+    def self.precedence(*)
+      Precedence[:and_or]
+    end
+  end
+
+  Or = And
+
   class Assign
     def self.parse(parser, left, token)
       right = parser.parse_expression(0)
@@ -130,6 +151,8 @@ module Parselet
     end
   end
 
+  class Or
+  end
 
   # Helper / Generic Parselets
 
