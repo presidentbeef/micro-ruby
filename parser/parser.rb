@@ -13,7 +13,6 @@ class Parser
   def initialize_parselets
     infix(:assign, Parselet::Assign)
     infix(:dot, Parselet::DotCall)
-    infix(:lparen, Parselet::Arg)
     infix(:and, Parselet::And)
     infix(:or, Parselet::Or)
     prefix(:minus)

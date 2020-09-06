@@ -83,7 +83,7 @@ module Parselet
 
       if parser.peek? :lparen
         parser.next_token(:lparen)
-        params = Parameter.parse(parser)
+        params = ArgParser.parse(parser)
       end
 
       body = BlockParser.parse(parser)
@@ -95,8 +95,15 @@ module Parselet
 
   class DotCall
     def self.parse(parser, left, token)
-      right = parser.parse_expression(precedence(token))
-      AST::Call.new(left, right)
+      name = parser.next_token(:name)
+      if parser.peek? :lparen
+        parser.next_token(:lparen)
+        args = ArgParser.parse(parser)
+
+        AST::Call.new(left, name, args)
+      else
+        AST::Call.new(left, right)
+      end
     end
 
     def self.precedence(_)
@@ -193,34 +200,6 @@ module Parselet
     end
   end
 
-  # Call argument parser
-  class Arg
-    def self.parse(parser, left, token)
-      args = AST::ArgList.new
-
-      next_arg(args, parser)
-
-      while parser.peek? :comma
-        parser.next_token(:comma)
-        next_arg(args, parser)
-      end
-
-      parser.next_token
-
-      AST::Call.new(nil, left, args)
-    end
-
-    def self.next_arg(args, parser)
-      unless parser.peek? :rparen
-        args << parser.parse_expression(precedence(self))
-      end
-    end
-
-    def self.precedence(_)
-      1
-    end
-  end
-
   # Helper to parse a block of expressions
   # into an array of expressions
   class BlockParser
@@ -235,7 +214,9 @@ module Parselet
     end
   end
 
-  class Parameter
+  # Will need to split this at some point to deal
+  # with formal parameters vs arguments
+  class ArgParser
     def self.parse(parser)
       args = AST::ArgList.new
 
