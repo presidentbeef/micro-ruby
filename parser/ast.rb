@@ -17,6 +17,12 @@ module AST
     end
   end
 
+  # Basic class for ASTs with fixed values
+  class BasicTerm
+    def initialize(token)
+    end
+  end
+
   class Class
     attr_reader :name, :parent, :body
 
@@ -48,9 +54,7 @@ module AST
   class Const < Name
   end
 
-  class False
-    def initialize(token)
-    end
+  class False < BasicTerm
   end
 
   class If
@@ -90,9 +94,7 @@ module AST
     end
   end
 
-  class Nil
-    def initialize(token)
-    end
+  class Nil < BasicTerm
   end
 
   class Not
@@ -106,9 +108,10 @@ module AST
   class Or < And
   end
 
-  class True
-    def initialize(token)
-    end
+  class Self < BasicTerm
+  end
+
+  class True < BasicTerm
   end
 
   # Generic / Helper ASTs
