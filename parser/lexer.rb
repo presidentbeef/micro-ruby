@@ -43,8 +43,7 @@ Keywords = %w[
 class Reader
   def initialize(input_string)
     @str = input_string
-    @pos = 0
-    @last_rune = nil
+    reset
   end
 
   def next_rune
@@ -58,14 +57,16 @@ class Reader
   def back
     @pos -= 1
   end
+
+  def reset
+    @pos = 0
+    @last_rune = nil
+  end
 end
 
 class Lexer
   def initialize(reader)
-    @line = 1
-    @col = 1
     @reader = reader
-    @cache = nil
   end
 
   def peek
@@ -174,5 +175,20 @@ class Lexer
   end
 
   def reset_line
+  end
+
+  def reset
+    @cache = nil
+    @line = 1
+    @col = 1
+    @reader.reset
+  end
+
+  def all
+    tokens = []
+    while not empty?
+      tokens << next_token
+    end
+    tokens
   end
 end
