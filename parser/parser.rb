@@ -29,6 +29,7 @@ class Parser
     register(:nil, Parselet::BasicValue)
     register(:true, Parselet::BasicValue)
     register(:false, Parselet::BasicValue)
+    register(:self, Parselet::BasicValue)
     register(:not, Parselet::Not)
   end
 

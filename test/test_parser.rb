@@ -119,4 +119,12 @@ class TestParserBasics < Minitest::Test
   def test_false
     assert_parses 'false', AST::False
   end
+
+  def test_self
+    assert_parses 'self', AST::Self
+  end
+
+  def test_self_call
+    assert_parses 'self.something(1)', AST::Call
+  end
 end

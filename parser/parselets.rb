@@ -252,6 +252,8 @@ module Parselet
         AST::True.new(token)
       when :false
         AST::False.new(token)
+      when :self
+        AST::Self.new(token)
       else
         raise "Unknown value: #{token}"
       end
