@@ -95,6 +95,14 @@ module AST
     end
   end
 
+  class Not
+    attr_reader :expr
+
+    def initialize(expr)
+      @expr = expr
+    end
+  end
+
   class Or < And
   end
 

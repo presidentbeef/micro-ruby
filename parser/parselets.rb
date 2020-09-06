@@ -151,6 +151,14 @@ module Parselet
     end
   end
 
+  class Not
+    def self.parse(parser, token)
+      expr = parser.parse_expression(Precedence[:and_or])
+
+      AST::Not.new(expr)
+    end
+  end
+
   class Or
   end
 
