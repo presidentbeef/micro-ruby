@@ -111,6 +111,9 @@ module AST
   class Self < BasicTerm
   end
 
+  class SelfMethod < Method
+  end
+
   class True < BasicTerm
   end
 

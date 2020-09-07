@@ -79,6 +79,14 @@ module Parselet
 
   class Method
     def self.parse(parser, token)
+      if parser.peek? :self
+        parser.next_token(:self)
+        parser.next_token(:dot)
+        self_method = true
+      else
+        self_method = false
+      end
+
       name = parser.next_token(:name)
 
       if parser.peek? :lparen
@@ -89,7 +97,11 @@ module Parselet
       body = BlockParser.parse(parser)
       parser.next_token(:end)
 
-      AST::Method.new(name, params, body)
+      if self_method
+        AST::SelfMethod.new(name, params, body)
+      else
+        AST::Method.new(name, params, body)
+      end
     end
   end
 

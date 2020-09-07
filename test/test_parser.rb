@@ -127,4 +127,8 @@ class TestParserBasics < Minitest::Test
   def test_self_call
     assert_parses 'self.something(1)', AST::Call
   end
+
+  def test_self_method
+    assert_parses "def self.x\nend", AST::SelfMethod
+  end
 end
