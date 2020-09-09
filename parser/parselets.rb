@@ -91,7 +91,7 @@ module Parselet
 
       if parser.peek? :lparen
         parser.next_token(:lparen)
-        params = ArgParser.parse(parser)
+        params = ArgParser.parse(parser, :lparen)
       end
 
       body = BlockParser.parse(parser)
@@ -126,7 +126,7 @@ module Parselet
       name = parser.next_token(:name)
       if parser.peek? :lparen
         parser.next_token(:lparen)
-        args = ArgParser.parse(parser)
+        args = ArgParser.parse(parser, :lparen)
       else
         args = AST::ArgList.new
       end
