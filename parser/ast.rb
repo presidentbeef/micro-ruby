@@ -117,6 +117,9 @@ module AST
   class True < BasicTerm
   end
 
+  class Unless < If
+  end
+
   # Generic / Helper ASTs
 
   class Prefix

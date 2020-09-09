@@ -108,6 +108,26 @@ class TestParserBasics < Minitest::Test
     RUBY
   end
 
+  def test_unless
+    assert_parses <<~RUBY, AST::Unless
+    unless something
+      blah
+    end
+    RUBY
+  end
+
+  def test_unless_else
+    assert_parses <<~RUBY, AST::Unless
+    unless something
+      this
+      thing
+    else
+      that
+      thing
+    end
+    RUBY
+  end
+
   def test_nil
     assert_parses 'nil', AST::Nil
   end

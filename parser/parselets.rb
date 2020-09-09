@@ -123,7 +123,7 @@ module Parselet
     end
   end
 
-  class IfCond
+  class If
     def self.parse(parser, token)
       condition = parser.parse_expression
 
@@ -134,7 +134,7 @@ module Parselet
         else_branch = BlockParser.parse(parser)
         parser.next_token(:end)
       when :elsif
-        else_branch = IfCond.parse(parser, nil)
+        else_branch = If.parse(parser, nil)
       end
 
       return AST::If.new(condition, then_branch, else_branch)
@@ -179,6 +179,26 @@ module Parselet
   end
 
   class Or
+  end
+
+  class Unless
+    def self.parse(parser, token)
+      condition = parser.parse_expression
+
+      then_branch = BlockParser.parse(parser, [:else, :end])
+
+      case parser.next_token.type
+      when :else
+        else_branch = BlockParser.parse(parser)
+        parser.next_token(:end)
+      when :end
+        # cool
+      else
+        raise "Expected `else` or `end` but got #{parser.peek.inspect}"
+      end
+
+      return AST::Unless.new(condition, then_branch, else_branch)
+    end
   end
 
   # Helper / Generic Parselets
