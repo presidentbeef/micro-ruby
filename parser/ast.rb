@@ -34,12 +34,22 @@ module AST
   end
 
   class Call
-    attr_reader :target, :method, :args
+    attr_reader :target, :method, :args, :block
 
-    def initialize(target, method, args = ArgList.new)
+    def initialize(target, method, args, block)
       @target = target
       @method = method
       @args = args
+      @block = block
+    end
+  end
+
+  class DoBlock
+    attr_reader :args, :block
+
+    def initialize(args, block)
+      @args = args
+      @block = block
     end
   end
 

@@ -124,6 +124,8 @@ class Lexer
         return Token.new(:rparen)
       when ','
         return Token.new(:comma)
+      when '|'
+        return Token.new(:pipe)
       when /\s/
         next
       when /[0-9]/

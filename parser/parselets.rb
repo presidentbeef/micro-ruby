@@ -105,17 +105,38 @@ module Parselet
     end
   end
 
+  class DoBlock
+    def self.parse(parser, token)
+      if parser.peek? :pipe
+        parser.next_token(:pipe)
+        args = ArgParser.parse(parser, :pipe)
+      else
+        args = AST::ArgList.new
+      end
+
+      block = BlockParser.parse(parser)
+      parser.next_token(:end)
+
+      AST::DoBlock.new(args, block)
+    end
+  end
+
   class DotCall
     def self.parse(parser, left, token)
       name = parser.next_token(:name)
       if parser.peek? :lparen
         parser.next_token(:lparen)
         args = ArgParser.parse(parser)
-
-        AST::Call.new(left, name, args)
       else
-        AST::Call.new(left, name)
+        args = AST::ArgList.new
       end
+
+      if parser.peek? :do
+        do_token = parser.next_token(:do)
+        block = DoBlock.parse(parser, do_token)
+      end
+
+      AST::Call.new(left, name, args, block)
     end
 
     def self.precedence(_)
@@ -249,7 +270,14 @@ module Parselet
   # Will need to split this at some point to deal
   # with formal parameters vs arguments
   class ArgParser
-    def self.parse(parser)
+    def self.parse(parser, token)
+      case token
+      when :lparen
+        end_token = :rparen
+      when :pipe
+        end_token = :pipe
+      end
+
       args = AST::ArgList.new
 
       next_arg(args, parser)
@@ -259,7 +287,7 @@ module Parselet
         next_arg(args, parser)
       end
 
-      parser.next_token(:rparen)
+      parser.next_token(end_token)
 
       args
     end

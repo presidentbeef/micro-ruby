@@ -53,6 +53,18 @@ class TestParserBasics < Minitest::Test
     assert_parses 'a.b(1, 2, x)', AST::Call
   end
 
+  def test_chained_call
+    assert_parses 'a.b.c', AST::Call
+  end
+
+  def test_dot_call_do_block
+    assert_parses <<~RUBY, AST::Call
+    a.b do |x, y|
+      c
+    end
+    RUBY
+  end
+
   def test_class
     assert_parses <<~RUBY, AST::Class
     class TestClass
