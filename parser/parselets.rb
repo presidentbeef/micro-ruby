@@ -114,7 +114,7 @@ module Parselet
 
         AST::Call.new(left, name, args)
       else
-        AST::Call.new(left, right)
+        AST::Call.new(left, name)
       end
     end
 
