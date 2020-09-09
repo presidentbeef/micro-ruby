@@ -59,8 +59,9 @@ class Reader
   end
 
   def reset
-    @pos = 0
     @last_rune = nil
+    @cache = nil
+    @pos = 0
   end
 end
 
