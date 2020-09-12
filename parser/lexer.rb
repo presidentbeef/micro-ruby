@@ -68,6 +68,7 @@ end
 class Lexer
   def initialize(reader)
     @reader = reader
+    reset
   end
 
   def peek
