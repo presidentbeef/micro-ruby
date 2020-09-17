@@ -32,6 +32,7 @@ class Parser
     register(:false, Parselet::BasicValue)
     register(:self, Parselet::BasicValue)
     register(:not, Parselet::Not)
+    register(:dstring_start, Parselet::DoubleString)
   end
 
   def parse
@@ -74,7 +75,7 @@ class Parser
   end
 
   def next_precedence
-    token = peek 
+    token = peek
     return 0 unless token
 
     if infix_parselet = @infix_parselets[token.type]
@@ -84,7 +85,7 @@ class Parser
     end
   end
 
-  def peek 
+  def peek
     @tokens.peek
   end
 

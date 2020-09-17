@@ -125,6 +125,8 @@ class Lexer
         return Token.new(:comma)
       when '|'
         return Token.new(:pipe)
+      when '"'
+        return lex_double_string
       when /\s/
         next
       when /[0-9]/
@@ -133,6 +135,26 @@ class Lexer
         return lex_name(r)
       else
         raise "Unexpected character: `#{r}`"
+      end
+    end
+  end
+
+  def lex_double_string
+    last_seen = nil
+    str = ''.dup
+
+    loop do
+      s = @reader.next_rune
+
+      if s == '"' and last_seen != '\\'
+        @cache << Token.new(:dstring_end)
+        @cache << Token.new(:string_content, str)
+        return Token.new(:dstring_start)
+      elsif s.nil?
+        raise "Missing a `\"`? Reached end of file and didn't see end of double-quoted string."
+      else
+        last_seen = s
+        str << s
       end
     end
   end
@@ -180,7 +202,7 @@ class Lexer
   end
 
   def reset
-    @cache = nil
+    @cache = []
     @line = 1
     @col = 1
     @reader.reset

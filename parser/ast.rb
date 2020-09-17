@@ -53,6 +53,14 @@ module AST
     end
   end
 
+  class DoubleString
+    attr_reader :string
+
+    def initialize(string)
+      @string = string
+    end
+  end
+
   class Name
     attr_reader :name
 

@@ -163,4 +163,10 @@ class TestParserBasics < Minitest::Test
   def test_self_method
     assert_parses "def self.x\nend", AST::SelfMethod
   end
+
+  def test_double_string
+    assert_parses '""', AST::DoubleString
+    assert_parses '"hello world"', AST::DoubleString
+    assert_parses '"goodbye\" world"', AST::DoubleString
+  end
 end

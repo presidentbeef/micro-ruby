@@ -202,6 +202,15 @@ module Parselet
   class Or
   end
 
+  class DoubleString
+    def self.parse(parser, token)
+      str = parser.next_token(:string_content)
+      parser.next_token(:dstring_end)
+
+      AST::DoubleString.new(str)
+    end
+  end
+
   class Unless
     def self.parse(parser, token)
       condition = parser.parse_expression
