@@ -72,11 +72,11 @@ class Lexer
   end
 
   def peek
-    if @cache
-      return @cache
+    if @cache.any?
+      return @cache.last
     else
       nt = next_token
-      @cache = nt
+      @cache << nt
       nt
     end
   end
@@ -86,10 +86,8 @@ class Lexer
   end
 
   def next_token
-    if @cache
-      t = @cache
-      @cache = nil
-      return t
+    if @cache.any?
+      return @cache.pop
     end
 
     loop do
