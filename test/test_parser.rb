@@ -169,4 +169,14 @@ class TestParserBasics < Minitest::Test
     assert_parses '"hello world"', AST::DoubleString
     assert_parses '"goodbye\" world"', AST::DoubleString
   end
+
+  def test_more_than_one_expression
+    assert_parses <<~RUBY, AST::Block
+    a.b(1)
+    if x
+      yikes
+      oops
+    end
+    RUBY
+  end
 end

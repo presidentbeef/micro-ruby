@@ -36,13 +36,12 @@ class Parser
   end
 
   def parse
-    ast = parse_expression
-
-    unless @tokens.empty?
-      raise "Didn't finish parsing. Stopped at #{@tokens.peek.inspect}"
+    ast = Parselet::BlockParser.parse(self, [:eof])
+    if ast.exps.count == 1
+      ast.exps.first
+    else
+      ast
     end
-
-    ast
   end
 
   def parse_expression(precedence = 0)
