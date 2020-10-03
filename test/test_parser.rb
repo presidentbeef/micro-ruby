@@ -45,6 +45,10 @@ class TestParserBasics < Minitest::Test
     assert_parses 'x = 873', AST::Assign
   end
 
+  def test_equals
+    assert_parses 'x == 873', AST::BinaryOp
+  end
+
   def test_dot_call
     assert_parses 'a.b', AST::Call
   end
@@ -172,8 +176,8 @@ class TestParserBasics < Minitest::Test
 
   def test_more_than_one_expression
     assert_parses <<~RUBY, AST::Block
-    a.b(1)
-    if x
+    x = a.b(1)
+    if x == 1
       yikes
       oops
     end

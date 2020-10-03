@@ -114,7 +114,13 @@ class Lexer
       when '<'
         return Token.new(:lt, '<')
       when '='
-        return Token.new(:assign, '=')
+        next_rune = @reader.next_rune
+        if next_rune == '='
+          return Token.new(:equals, '==')
+        else
+          @reader.back
+          return Token.new(:assign, '=')
+        end
       when '.'
         return Token.new(:dot)
       when '('

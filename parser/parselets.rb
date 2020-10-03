@@ -254,7 +254,7 @@ module Parselet
         Precedence[:product]
       when :gt, :lt
         Precedence[:compare]
-      when :equal
+      when :equals
         Precedence[:equality]
       else
         raise "Unknown operator: #{op}"

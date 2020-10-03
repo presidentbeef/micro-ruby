@@ -19,6 +19,7 @@ class Parser
     binary_op(:plus)
     binary_op(:gt)
     binary_op(:minus)
+    binary_op(:equals)
     register(:class, Parselet::Class)
     register(:const, Parselet::Const)
     register(:if, Parselet::If)
