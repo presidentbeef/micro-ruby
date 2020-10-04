@@ -2,6 +2,7 @@ module AST
   # Base class for AST
   class Base
     attr_reader :fields
+    @field_names = [].freeze
 
     # Set field names
     def self.fields(*args)
@@ -16,7 +17,7 @@ module AST
     # Ensures class names are inherited
     def self.inherited(klass)
       if self.class != Base
-        klass.fields(*@field_names)
+        klass.fields(*self.field_names)
       end
     end
 
