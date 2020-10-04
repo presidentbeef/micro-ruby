@@ -1,19 +1,32 @@
 module AST
-  class And
-    attr_reader :left, :right
-
-    def initialize(left, right)
-      @left = left
-      @right = right
+  # Base class for AST
+  class Base
+    # Set field names
+    def self.fields(*args)
+      attr_reader(*args)
+      @field_names = args.freeze
     end
-  end
 
-  class Assign
-    attr_reader :name, :value
+    def self.field_names
+      @field_names
+    end
 
-    def initialize(name, value)
-      @name = name
-      @value = value
+    # Ensures class names are inherited
+    def self.inherited(klass)
+      if self.class != Base
+        klass.fields(*@field_names)
+      end
+    end
+
+    # Set up the class by mapping arguments to fields
+    def initialize(*args)
+      self.class.field_names.each_with_index do |field, i|
+        if i > args.count
+          raise ArgumentError, "No value provided for field `#{field}`"
+        end
+
+        instance_variable_set(:"@#{field}", args[i])
+      end
     end
   end
 
@@ -23,50 +36,32 @@ module AST
     end
   end
 
-  class Class
-    attr_reader :name, :parent, :body
-
-    def initialize(name, parent, body)
-      @name = name
-      @parent = parent
-      @body = body
-    end
+  class And < Base
+    fields :left, :right
   end
 
-  class Call
-    attr_reader :target, :method, :args, :block
-
-    def initialize(target, method, args, block)
-      @target = target
-      @method = method
-      @args = args
-      @block = block
-    end
+  class Assign < Base
+    fields :name, :value
   end
 
-  class DoBlock
-    attr_reader :args, :block
-
-    def initialize(args, block)
-      @args = args
-      @block = block
-    end
+  class Class < Base
+    fields :name, :parent, :body
   end
 
-  class DoubleString
-    attr_reader :string
-
-    def initialize(string)
-      @string = string
-    end
+  class Call < Base
+    fields :target, :method, :args, :block
   end
 
-  class Name
-    attr_reader :name
+  class DoBlock < Base
+    fields :args, :block
+  end
 
-    def initialize(name)
-      @name = name
-    end
+  class DoubleString < Base
+    fields :string
+  end
+
+  class Name < Base
+    fields :name
   end
 
   class Const < Name
@@ -75,52 +70,27 @@ module AST
   class False < BasicTerm
   end
 
-  class If
-    attr_reader :cond, :then_branch, :else_branch
-
-    def initialize(cond, then_branch, else_branch)
-      @cond = cond
-      @then_branch = then_branch
-      @else_branch = else_branch
-    end
+  class If < Base
+    fields :cond, :then_branch, :else_branch
   end
 
-  class Int
-    attr_reader :value
-
-    def initialize(value)
-      @value = value
-    end
+  class Int < Base
+    fields :value
   end
 
-  class Method
-    attr_reader :name, :params, :body
-
-    def initialize(name, params, body)
-      @name = name
-      @params = params
-      @body = body
-    end
+  class Method < Base
+    fields :name, :params, :body
   end
 
-  class Module
-    attr_reader :name, :body
-
-    def initialize(name, body)
-      @name = name
-      @body = body
-    end
+  class Module < Base
+    fields :name, :body
   end
 
   class Nil < BasicTerm
   end
 
-  class Not
-    attr_reader :expr
-
-    def initialize(expr)
-      @expr = expr
-    end
+  class Not < Base
+    fields :expr
   end
 
   class Or < And
@@ -140,29 +110,16 @@ module AST
 
   # Generic / Helper ASTs
 
-  class Prefix
-    attr_reader :op, :operand
-
-    def initialize(op, operand)
-      @op = op
-      @operand = operand
-    end
+  class Prefix < Base
+    fields :op, :operand
   end
 
-  class BinaryOp
-    attr_reader :left
-    attr_reader :right
-    attr_reader :op
-
-    def initialize(left, op, right)
-      @left = left
-      @op = op
-      @right = right
-    end
+  class BinaryOp < Base
+    fields :left, :op, :right
   end
 
-  class ArgList
-    attr_reader :args
+  class ArgList < Base
+    fields :args
 
     def initialize
       @args = []
@@ -173,8 +130,8 @@ module AST
     end
   end
 
-  class Block
-    attr_reader :exps
+  class Block < Base
+    fields :exps
 
     def initialize
       @exps = []
