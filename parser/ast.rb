@@ -44,6 +44,10 @@ module AST
   class BasicTerm
     def initialize(token)
     end
+
+    def == rhs
+      self.class == rhs.class
+    end
   end
 
   class And < Base

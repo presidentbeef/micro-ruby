@@ -2,7 +2,15 @@ require_relative 'ast'
 
 module Sexp
   def s type, *args
-    AST.const_get(type).new(*args)
+    klass = AST.const_get(type)
+
+    if klass < AST::Base
+      klass.new(*args)
+    elsif klass < AST::BasicTerm
+      klass.new(klass) # TODO: token?
+    else
+      raise "Unexpected AST type: #{klass.inspect}"
+    end
   end
 end
 
