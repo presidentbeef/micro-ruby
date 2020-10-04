@@ -97,11 +97,23 @@ class TestParserBasics < Minitest::Test
     RUBY
   end
 
+  def test_def_method_no_args
+    assert_parses <<~RUBY, AST::Method
+    def a
+    end
+    RUBY
+  end
+
   def test_class_with_methods
     assert_parses <<~RUBY, AST::Class
     class Test
       def test
         a.b(1)
+      end
+
+      def test2
+        1
+        "2"
       end
     end
     RUBY
