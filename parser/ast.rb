@@ -131,8 +131,8 @@ module AST
   class ArgList < Base
     fields :args
 
-    def initialize
-      @args = []
+    def initialize(args = [])
+      super
     end
 
     def << arg
@@ -143,8 +143,8 @@ module AST
   class Block < Base
     fields :exps
 
-    def initialize
-      @exps = []
+    def initialize(exps = [])
+      super
     end
 
     def << exp
