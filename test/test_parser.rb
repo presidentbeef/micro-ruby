@@ -1,36 +1,45 @@
 require_relative '../parser/parser'
 require_relative '../parser/ast'
+require_relative '../parser/sexp'
 require 'minitest/autorun'
 require 'minitest/pride'
 
 class TestParserBasics < Minitest::Test
+  include Sexp
+
   def assert_parses(input, expected_type = nil)
-    parser = Parser.new(Lexer.new(Reader.new(input)))
+    lexer = Lexer.new(Reader.new(input))
+    parser = Parser.new(lexer)
     ast = parser.parse
 
-    if expected_type
+    if expected_type.is_a? Class
       assert_kind_of expected_type, ast
+    else
+      assert_equal ast, expected_type
     end
   end
 
   def test_and
-    assert_parses '1 and 2', AST::And
+    assert_parses '1 and 2', s(:And, s(:Int, 1), s(:Int, 2))
   end
 
   def test_or
-    assert_parses 'a or b', AST::Or
+    assert_parses 'a or b', s(:Or, s(:Name, 'a'), s(:Name, 'b'))
   end
 
   def test_not
-    assert_parses 'not a', AST::Not
+    assert_parses 'not a', s(:Not, s(:Name, 'a'))
   end
 
   def test_not_or
-    assert_parses 'not a or b', AST::Or
+    assert_parses 'not a or b', s(:Or,
+                                  s(:Not,
+                                    s(:Name, "a")),
+                                    s(:Name, "b"))
   end
 
   def test_integer
-    assert_parses '1', AST::Int
+    assert_parses '1', s(:Int, 1)
   end
 
   def test_plus
@@ -120,7 +129,7 @@ class TestParserBasics < Minitest::Test
   end
 
   def test_const
-    assert_parses 'CONST', AST::Const
+    assert_parses 'CONST', s(:Const, 'CONST')
   end
 
   def test_if
@@ -157,19 +166,19 @@ class TestParserBasics < Minitest::Test
   end
 
   def test_nil
-    assert_parses 'nil', AST::Nil
+    assert_parses 'nil', s(:Nil)
   end
 
   def test_true
-    assert_parses 'true', AST::True
+    assert_parses 'true', s(:True)
   end
 
   def test_false
-    assert_parses 'false', AST::False
+    assert_parses 'false', s(:False)
   end
 
   def test_self
-    assert_parses 'self', AST::Self
+    assert_parses 'self', s(:Self)
   end
 
   def test_self_call
