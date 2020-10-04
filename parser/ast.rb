@@ -1,6 +1,8 @@
 module AST
   # Base class for AST
   class Base
+    attr_reader :fields
+
     # Set field names
     def self.fields(*args)
       attr_reader(*args)
@@ -27,6 +29,13 @@ module AST
 
         instance_variable_set(:"@#{field}", args[i])
       end
+
+      @fields = args.freeze
+    end
+
+    def == rhs
+      self.class == rhs.class and
+        self.fields == rhs.fields
     end
   end
 
