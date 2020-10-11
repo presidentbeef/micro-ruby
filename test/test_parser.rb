@@ -43,19 +43,30 @@ class TestParserBasics < Minitest::Test
   end
 
   def test_plus
-    assert_parses '1 + 2', AST::BinaryOp
+    assert_parses '1 + 2', s(:BinaryOp,
+                             s(:Int, 1),
+                             :plus,
+                             s(:Int, 2))
   end
 
   def test_minus
-    assert_parses '20 - 100', AST::BinaryOp
+    assert_parses '20 - 100', s(:BinaryOp,
+                                s(:Int, 20),
+                                :minus,
+                                s(:Int, 100))
   end
 
   def test_assign
-    assert_parses 'x = 873', AST::Assign
+    assert_parses 'x = 873', s(:Assign,
+                               s(:Name, 'x'),
+                               s(:Int, 873))
   end
 
   def test_equals
-    assert_parses 'x == 873', AST::BinaryOp
+    assert_parses 'x == 873', s(:BinaryOp,
+                                s(:Name, 'x'),
+                                :equals,
+                                s(:Int, 873))
   end
 
   def test_dot_call
