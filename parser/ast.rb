@@ -58,6 +58,10 @@ module AST
     fields :name, :value
   end
 
+  class BeginBlock < Base
+    fields :body, :rescues, :ensure_clause, :else_clause
+  end
+
   class Class < Base
     fields :name, :parent, :body
   end

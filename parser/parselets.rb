@@ -47,13 +47,41 @@ module Parselet
     end
   end
 
-  class Class
-    attr_reader :name, :parent, :body
+  class Begin
+    def self.parse(parser, token)
+      rescues = []
+      ensure_clause = nil
+      else_clause = nil
+      body = BlockParser.parse(parser, [:rescue, :ensure, :else, :end])
 
+      until parser.peek? :end
+        next_token = parser.peek
+
+        case next_token
+        when :rescue
+          rescues << Rescue.parse(parser, parser.next_token)
+        when :ensure
+          raise "Too many ensure clauses! #{next_token.inspect}" if ensure_clause
+          ensure_clause = Ensure.parse(parser, parser.next_token)
+        when :else
+          raise "Too many else clauses #{next_token.inspect}!" if else_clause
+          else_clause = RescueElse.parse(parser, parser.next_token)
+        else
+          raise "Unexpected ending to begin block: #{next_token.inspect}"
+        end
+      end
+
+      parser.next_token(:end)
+
+      AST::BeginBlock.new(body, rescues, ensure_clause, else_clause)
+    end
+  end
+
+  class Class
     def self.parse(parser, token)
       name = Name.parse(parser, parser.next_token(:const))
 
-      if parser.peek.type == :lt
+      if parser.peek? :lt
         parser.next_token
         parent = Name.parse(parser, parser.next_token(:const))
       else

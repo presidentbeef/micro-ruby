@@ -34,6 +34,7 @@ class Parser
     register(:self, Parselet::BasicValue)
     register(:not, Parselet::Not)
     register(:dstring_start, Parselet::DoubleString)
+    register(:begin, Parselet::Begin)
   end
 
   def parse
