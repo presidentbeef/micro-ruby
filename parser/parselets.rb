@@ -204,7 +204,7 @@ module Parselet
 
   class DoubleString
     def self.parse(parser, token)
-      str = parser.next_token(:string_content)
+      str = parser.next_token(:string_content).text
       parser.next_token(:dstring_end)
 
       AST::DoubleString.new(str)

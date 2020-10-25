@@ -201,9 +201,9 @@ class TestParserBasics < Minitest::Test
   end
 
   def test_double_string
-    assert_parses '""', AST::DoubleString
-    assert_parses '"hello world"', AST::DoubleString
-    assert_parses '"goodbye\" world"', AST::DoubleString
+    assert_parses '""', s(:DoubleString, '')
+    assert_parses '"hello world"', s(:DoubleString, 'hello world')
+    assert_parses '"goodbye\" world"', s(:DoubleString, "goodbye\\\" world")
   end
 
   def test_more_than_one_expression
