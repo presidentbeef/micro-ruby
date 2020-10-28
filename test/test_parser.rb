@@ -226,12 +226,29 @@ class TestParserBasics < Minitest::Test
   end
 
   def test_begin_simple_rescue
-    assert_parses <<~RUBY, AST::BeginBlock
+    ast = s(:BeginBlock,
+            s(:Block,
+              [
+                s(:Name, "a"),
+                s(:Name, "b")
+              ]
+             ),
+             [
+               s(:Rescue,
+                 s(:Block,
+                   [
+                     s(:Name, "d")
+                   ]),
+             nil, nil)
+             ],
+             nil, nil)
+
+    assert_parses <<~RUBY, ast
     begin
       a
       b
     rescue
-      c
+      d
     end
     RUBY
   end

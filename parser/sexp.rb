@@ -19,6 +19,8 @@ class AST::Base
     sexps = fields.map do |field|
       if field.is_a? AST::Base or field.is_a? AST::BasicTerm
         field.to_sexp
+      elsif field.is_a? Array
+        "[#{field.map(&:to_sexp).join(', ')}]"
       else
         field.inspect
       end
