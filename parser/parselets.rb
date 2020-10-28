@@ -57,7 +57,7 @@ module Parselet
       until parser.peek? :end
         next_token = parser.peek
 
-        case next_token
+        case next_token.type
         when :rescue
           rescues << Rescue.parse(parser, parser.next_token)
         when :ensure
@@ -236,6 +236,27 @@ module Parselet
       parser.next_token(:dstring_end)
 
       AST::DoubleString.new(str)
+    end
+  end
+
+  class Rescue
+    def self.parse(parser, token)
+      exception_class = if parser.peek? :const
+                          parser.next_token(:const)
+                        else
+                          nil
+                        end
+
+      exception_variable = if parser.peek? :rocket
+                             parser.next_token(:rocket)
+                             parser.next_token(:name)
+                           else
+                             nil
+                           end
+
+      body = BlockParser.parse(parser, [:else, :end, :ensure, :rescue])
+
+      AST::Rescue.new(body, exception_class, exception_variable)
     end
   end
 

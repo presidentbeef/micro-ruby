@@ -114,6 +114,10 @@ module AST
   class Or < And
   end
 
+  class Rescue < Base
+    fields :body, :exception_class, :exception_variable
+  end
+
   class Self < BasicTerm
   end
 

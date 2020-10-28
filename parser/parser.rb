@@ -35,6 +35,7 @@ class Parser
     register(:not, Parselet::Not)
     register(:dstring_start, Parselet::DoubleString)
     register(:begin, Parselet::Begin)
+    register(:rescue, Parselet::Rescue)
   end
 
   def parse

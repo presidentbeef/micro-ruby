@@ -224,4 +224,15 @@ class TestParserBasics < Minitest::Test
     end
     RUBY
   end
+
+  def test_begin_simple_rescue
+    assert_parses <<~RUBY, AST::BeginBlock
+    begin
+      a
+      b
+    rescue
+      c
+    end
+    RUBY
+  end
 end
