@@ -249,7 +249,7 @@ module Parselet
 
       exception_variable = if parser.peek? :rocket
                              parser.next_token(:rocket)
-                             parser.next_token(:name)
+                             Name.parse(parser, parser.next_token(:name))
                            else
                              nil
                            end
