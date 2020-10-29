@@ -52,7 +52,8 @@ module Parselet
       rescues = []
       ensure_clause = nil
       else_clause = nil
-      body = BlockParser.parse(parser, [:rescue, :ensure, :else, :end])
+      end_tokens = [:rescue, :ensure, :else, :end]
+      body = BlockParser.parse(parser, end_tokens)
 
       until parser.peek? :end
         next_token = parser.peek
@@ -62,10 +63,12 @@ module Parselet
           rescues << Rescue.parse(parser, parser.next_token)
         when :ensure
           raise "Too many ensure clauses! #{next_token.inspect}" if ensure_clause
-          ensure_clause = Ensure.parse(parser, parser.next_token)
+          parser.next_token(:ensure)
+          ensure_clause = BlockParser.parse(parser, end_tokens)
         when :else
           raise "Too many else clauses #{next_token.inspect}!" if else_clause
-          else_clause = RescueElse.parse(parser, parser.next_token)
+          parser.next_token(:else)
+          else_clause = BlockParser.parse(parser, end_tokens)
         else
           raise "Unexpected ending to begin block: #{next_token.inspect}"
         end
