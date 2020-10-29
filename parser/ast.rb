@@ -62,6 +62,9 @@ module AST
     fields :body, :rescues, :ensure_clause, :else_clause
   end
 
+  class Break < BasicTerm
+  end
+
   class Class < Base
     fields :name, :parent, :body
   end

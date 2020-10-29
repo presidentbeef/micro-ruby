@@ -288,4 +288,8 @@ class TestParserBasics < Minitest::Test
     end
     RUBY
   end
+
+  def test_break
+    assert_parses 'break', AST::Break
+  end
 end
