@@ -107,6 +107,9 @@ module AST
     fields :name, :body
   end
 
+  class Next < BasicTerm
+  end
+
   class Nil < BasicTerm
   end
 

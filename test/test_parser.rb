@@ -292,4 +292,8 @@ class TestParserBasics < Minitest::Test
   def test_break
     assert_parses 'break', AST::Break
   end
+
+  def test_next
+    assert_parses 'next', AST::Next
+  end
 end

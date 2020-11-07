@@ -37,6 +37,7 @@ class Parser
     register(:begin, Parselet::Begin)
     register(:rescue, Parselet::Rescue)
     register(:break, Parselet::BasicValue)
+    register(:next, Parselet::BasicValue)
   end
 
   def parse

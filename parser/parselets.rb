@@ -377,6 +377,8 @@ module Parselet
         AST::Self.new(token)
       when :break
         AST::Break.new(token)
+      when :next
+        AST::Next.new(token)
       else
         raise "Unknown value: #{token}"
       end
