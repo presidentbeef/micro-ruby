@@ -80,6 +80,40 @@ module Parselet
     end
   end
 
+  class Case
+    def self.parse(parser, token)
+      case_value = nil
+      when_clauses = []
+      else_clause = nil
+
+      # Check if `case [value]` or just `case when`
+      unless parser.peek?(:when) or parser.peek?(:else)
+        case_value = parser.parse_expression
+      end
+
+      # Now parse when/else clauses
+      until parser.peek? :end
+        next_token = parser.peek
+
+        case next_token.type
+        when :when
+          when_clauses << When.parse(parser, parser.next_token(:when))
+        when :else
+          raise "Too many else clauses #{next_token.inspect}!" if else_clause
+
+          parser.next_token(:else)
+          else_clause = BlockParser.parse(parser)
+        else
+          raise "Unexpected token in case clauses: #{next_token.inspect}"
+        end
+      end
+
+      parser.next_token(:end)
+
+      AST::Case.new(case_value, when_clauses, else_clause)
+    end
+  end
+
   class Class
     def self.parse(parser, token)
       name = Name.parse(parser, parser.next_token(:const))
@@ -280,6 +314,15 @@ module Parselet
       end
 
       return AST::Unless.new(condition, then_branch, else_branch)
+    end
+  end
+
+  class When
+    def self.parse(parser, token)
+      when_value = parser.parse_expression
+      when_block = BlockParser.parse(parser, [:else, :end, :when])
+
+      AST::When.new(when_value, when_block)
     end
   end
 

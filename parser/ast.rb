@@ -73,6 +73,10 @@ module AST
     fields :target, :method, :args, :block
   end
 
+  class Case < Base
+    fields :case_value, :when_clauses, :else_clause
+  end
+
   class DoBlock < Base
     fields :args, :block
   end
@@ -134,6 +138,10 @@ module AST
   end
 
   class Unless < If
+  end
+
+  class When < Base
+    fields :comparison, :body
   end
 
   # Generic / Helper ASTs

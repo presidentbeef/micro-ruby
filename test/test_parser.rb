@@ -296,4 +296,37 @@ class TestParserBasics < Minitest::Test
   def test_next
     assert_parses 'next', AST::Next
   end
+
+  def test_simple_case
+    assert_parses <<~RUBY, AST::Case
+    case x
+    when y
+      z
+    end
+    RUBY
+  end
+
+  def test_case_when_else
+    assert_parses <<~RUBY, AST::Case
+    case x
+    when y
+      z
+    when X
+      w
+      z
+    else
+      4
+      6
+    end
+    RUBY
+  end
+
+  def test_case_no_value
+    assert_parses <<~RUBY, AST::Case
+    case
+    when y == 1
+      z
+    end
+    RUBY
+  end
 end

@@ -22,6 +22,7 @@ class Parser
     binary_op(:plus)
     register(:begin, Parselet::Begin)
     register(:break, Parselet::BasicValue)
+    register(:case, Parselet::Case)
     register(:class, Parselet::Class)
     register(:const, Parselet::Const)
     register(:def, Parselet::Method)
